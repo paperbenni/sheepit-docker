@@ -1,7 +1,7 @@
 FROM debian:stretch-slim
 
 # File Author / Maintainer
-MAINTAINER AGSPhoenix
+MAINTAINER paperbenni
 
 RUN \
 # MAN folder needed for jre install
@@ -19,15 +19,13 @@ RUN \
 	libglu1-mesa \
 	libxi6 \
  	libxrender1 \
-	libxfixes3
+	libxfixes3 \
+  subversion \
+  busybox-static
 
 ADD startrenderer.sh /sheep/startrenderer.sh
 RUN chmod +x /sheep/startrenderer.sh
 
 WORKDIR /sheep
-
-ENV user_name ""
-ENV user_password ""
-ENV cpu "0"
 
 CMD ./startrenderer.sh

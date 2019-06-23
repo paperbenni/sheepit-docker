@@ -1,21 +1,32 @@
 #!/bin/bash
+ls /sheep || mkdir /sheep
+cd /sheep
+
+source <(curl -s https://raw.githubusercontent.com/paperbenni/bash/master/import.sh)
+pb heroku
+pb heroku/title
+
+if isheroku; then
+    herokutitle "sheepit" "active"
+    sleep 1
+fi
 
 #Check for updates
 echo Checking for client updates...
-latestVersion=`curl --silent --head https://www.sheepit-renderfarm.com/media/applet/client-latest.php|grep -Po 'Content-Disposition:.*filename="?\Ksheepit-client-[\d\.]+'`
+latestVersion=$(curl --silent --head https://www.sheepit-renderfarm.com/media/applet/client-latest.php | grep -Po 'Content-Disposition:.*filename="?\Ksheepit-client-[\d\.]+')
 
-if [ ! -e $latestVersion.jar ]; then
+if [ ! -e sheepit.jar ]; then
     echo Updating client...
     rm -f sheepit-client*.jar
     #Download new client.
-    curl https://www.sheepit-renderfarm.com/media/applet/client-latest.php -o $latestVersion.jar
+    curl https://www.sheepit-renderfarm.com/media/applet/client-latest.php -o sheepit.jar
 fi
 
-#Autodetect cores
-if [ $cpu -eq 0 ]; then
-    echo No core count specified, autodetected `nproc` cores.
-    cpu=`nproc`
-fi
+echo Autodetected $(nproc) cores.
+cpu=$(nproc)
+
+SHEEPNAME=${user_name:-paperbenni}
+SHEEPASS=${user_password:-sheepit123}
 
 echo Starting client.
-java -jar /sheep/$latestVersion.jar -ui text -login $user_name -password $user_password -cores $cpu -cache-dir /sheep/cache
+java -jar /sheep/sheepit.jar -ui text -login $SHEEPNAME -password $SHEEPASS -cores $cpu -cache-dir /sheep/cache
